@@ -1,0 +1,180 @@
+数据库：数据库的服务器用来保存数据，数据库的客户端用来操作服务器，对数据进行增删改查
+数据库是一个仓库，在仓库中可以存放集合。
+集合类似数组，在集合中可以存放文件。
+文档数据库中的最小单位，我们存储和操作的内容都是文档。
+MongoDB的文档的属性值也可以是一个文档，当一个文档的属性值是文档时，称为内嵌文档。
+https://www.mongodbmanager.com/download 下载mongodb manager 
+
+MongoDB的数据模型是面向文档的，所谓文档是一种类似JSON的结构，简单理解MongoDB这个数据库中存的是各种各样的JSON（BSON）。
+mongod --bind_ip 0.0.0.0 --logpath "F:\Mongodb\logs\mongodb.log" --logappend --dbpath "F:\Mongodb\data\db" --port 27017 --serviceName "MongoDB" --serviceDisplayName "MongoDB" --install
+mogod --dbpath "F:\Mongodb\data\db" #启动mongo服务
+打开另外一个cmd 输入mongo 链接mongodb ,启动客户端
+-基本概念
+ 数据库
+ 集合
+ 文档
+	-在MongoDB中，数据库和集合都不需要手动创建
+	当我们创建文档或者数据库时，如果文档和数据库都不存在，则创建数据库或者文档
+
+- 基本指令
+show dbs #显示所有数据库
+use dbname #进入数据库
+db #表示当前所处的数据库
+show collecttioan #显示数据库中所有集合
+
+- 数据库CRUD的操作
+
+ -向数据库插入文档
+	db.<collection>.insert(doc)； #<collection>为名字
+	 -向集合中插入一个文档 test数据集，students中插入一个学生对象
+	 -当我么向集合插入文档时，没有没有给文档制定_id属性，则数据库会自动给文档添加_id,确保id唯一
+	 -_id属性我们可以自己指定，但必须确保唯一性
+	 -ObjectId() #生成一个id,q
+	 -e.g:db.students.insert({name:'季志鹏',age:18,gender:"男"})
+	
+	db.stus.insert([
+	{name:'季志鹏',age:18,gender:"男"},
+	{name:'新垣结衣',age:18,gender:"女"},
+	{name:'泰勒',age:18,gender:"女"}
+	]);
+	 -向数据库插入多个文档
+	 
+	db.<collection>.insertOne()；
+	 -插入一个文档对象
+	 
+	db.<collection>.insertMany()；
+	 -插入多个文档对象，必须传数组
+	 
+	for(var i=1;i<=20000;i++){
+	db.numbers.insert({num:i}) 
+}  #向numbers中添加20000条数据
+
+	var arr = [];
+	for (var i=1;i<=20000;i++){
+	arr.push(num:i);
+}
+	db.numbers.insert(arr); #这样插入一次快一些
+ -查询数据库
+	查询文档时默认按照_id排序，升序排序
+	MongoDB支持直接通过内嵌文档的属性进行查询。如果通过内嵌文档进行查询，属性名必须加引号。
+	db.<collection>.find()；
+	 -查询当前集合中的所有文档，查询集合中所有符合文件的文档,可以接收对象，返回的是数组
+	 -e.g:db.stus.find({name:"季志鹏"}) #输入属性名（字段名）和名 ｛属性：值｝
+	 -e.g2:db.stus.find({name:"季志鹏",age:16}) #输入多个
+	 -e.g3:db.stus.find({"var1.var2":"ok"}); #var2是var1的内嵌文档
+	db.<collection>.find({}).count(); #返回结果的数量
+	 
+	db.<collection>.findOne():
+	 -查询符合条件的第一个文档，返回的是文档对象
+	 -db.<collection>.findOne().name; #直接可以查询
+	
+	db.numbers.find({num:{$gt:500}}); #num值大于500
+	db.numbers.find({num:{$gte:500}}); #num值大于等于500
+	db.numbers.find({num:{$eq:500}}); #num值等于500
+	db.numbers.find({num:{$lt:500}}); #num值小于500
+	db.numbers.find({num:{$gt:40,$lt:50}}); #num值大于40，小于50
+	db.numbers.find({$or:[{num:{$lt:40}},{num:{$gt:50}}]}); #num值小于40，或于50		
+	db.numbers.find().limit(10); #num前十条数据,limit()设置显示数据上限
+	db.numbers.find().skip(10).limit(10); #num值第11条数据到第20条数据,skip用于跳过
+
+
+	
+	
+	
+ -修改文档
+	db.<collection>.update(查询条件，新对象)；#默认改一个,添加multi:True修改多个
+	 -默认情况下会使用新对象来替换就对象，
+	 -如果需要修改指定的属性，而不替换，使
+	 -$set #修改不替换
+	 -$unset #删除指定属性
+	 
+	 db.<collection>.updateMany(); #同时修改多个文档
+	 
+	 db.<collection>.updateOne(); #修改一个符合条件的文档
+	 
+	 db.<collection>.replaceOne(); #替换
+	  -e.g:db.stus.replaceOne({username:"季志鹏"},{username:"孙子婷"});
+	 
+	 -e.g:db.stus.update({name:"季志鹏"},{age:25}); #只剩下age
+	 -e.g:db.stus.update({name:"季志鹏"},{$set:{age:25}})
+	 -e.g:db.stus.updateMany({name:"季志鹏"},{$unset:{age:25}}); #删除age的属性
+	
+	db.<collection>.update({},{$push{}}); #向数组中添加新元素
+	db.<collection>.update({},{$addToSet{}}); #向数组中添加新元素,已经有了不会再添加
+	db.<collection>.update({sal:{$lte:2000}},{$inc:{sal:400}}); #sal低于2000的自增400
+	
+ -删除文档，一般数据库中的数据不会删除，删除找不回，一般不会真正不会删除，一般会在数据中添加字段表示数据是否会删除
+	db.<collection>.remove();
+	db.<collection>.remove({}); #全部删除，清空集合，性能略差
+
+	 #可以根据条件删除文档，传递条件的方式和find一样，默认情况下有几个删几个
+	 -e.g:db.stus.remove({name:'季志鹏',age:18,gender:"男"});
+	 -e.g:db.stus.remove({name:'季志鹏',age:18,gender:"男"},true); #只删除一个
+	
+	db.<collection>.deleteOne()
+	db.<collection>.deleteMany()
+	db.<collection>.drop(); #删除集合
+	db.dropDatabase(); #删除数据库【注意】
+	
+-文档之间的关系
+ -1:1
+  -夫妻
+  -通过内嵌文档的形式体现出1对1的关系
+  
+ -1:n
+  -父母 - 孩子
+  -用户 - 订单
+  -也可以通过内嵌文档的形式来映射一对多的关系
+  db.users.insert([{
+	username:'jjj'},{
+	username:'sss'
+	}]);
+  db.orders.insert({
+	list:['pp','bb','dd'],
+	user_id:ObjectId("5b529a309d31f999a30270aa")
+	});
+  var user_id = db.users.findOne({username:"jjj"})._id;
+  db.orders.find({user_id:"user_id"}); #查看在order中jjj的订单
+  
+ -n:n
+  -分类 - 商品
+  db.teachers.insert([
+		{name:"A"},
+		{name:"B"},
+		{name:"C"}
+]);
+  db.stus.insert([
+	{
+		name:"1",
+		teach_ids:[
+			ObjectId("5b529a309d31f999a30270aa"),
+			ObjectId("5b529a309d31f999a30270as"),
+			ObjectId("5b529a309d31f999a30270ad")
+		]
+	}
+  	{
+		name:"2",
+		teach_ids:[
+			ObjectId("5b529a309d31f999a30270aa"),
+			ObjectId("5b529a309d31f999a30270as"),
+		]
+	}
+])
+
+	db.<collection>.find({}).sort({col:1}); #按照col字段去排序 1为升序 -1为降序
+	db.<collection>.find({}).sort({col1:1,col2:-1}); #先col1升序 当col1相同时再col2降序
+	limit\skip\sort()可以以任意顺序进行调用
+	db.<collection>.find({},{col:1,col2:0}); #只显示col 想显示谁设置1，_id默认都显示
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
