@@ -20,7 +20,10 @@ mogod --dbpath "F:\Mongodb\data\db" #启动mongo服务
 show dbs #显示所有数据库
 use dbname #进入数据库
 db #表示当前所处的数据库
-show collecttioan #显示数据库中所有集合
+show collections #显示数据库中所有集合
+db.createCollection("runoob") #创建 runoob 集合
+db.createCollection("mycoll", {capped:true, size:100000}) #创建指定大小的集合 大小为字节
+
 
 - 数据库CRUD的操作
 
@@ -62,6 +65,8 @@ show collecttioan #显示数据库中所有集合
 	 -e.g:db.stus.find({name:"季志鹏"}) #输入属性名（字段名）和名 ｛属性：值｝
 	 -e.g2:db.stus.find({name:"季志鹏",age:16}) #输入多个
 	 -e.g3:db.stus.find({"var1.var2":"ok"}); #var2是var1的内嵌文档
+	 -e.g4:db.stus.find({$or:[{name:"季志鹏"},{name:"孙小婷"}]}) #or
+	 -e.g5:db.stus.find({age:{$gt:20},$or:[{name:"季志鹏"},{name:"孙小婷"}]}) #and 和 or 同时使用
 	db.<collection>.find({}).count(); #返回结果的数量
 	 
 	db.<collection>.findOne():
@@ -76,10 +81,13 @@ show collecttioan #显示数据库中所有集合
 	db.numbers.find({$or:[{num:{$lt:40}},{num:{$gt:50}}]}); #num值小于40，或于50		
 	db.numbers.find().limit(10); #num前十条数据,limit()设置显示数据上限
 	db.numbers.find().skip(10).limit(10); #num值第11条数据到第20条数据,skip用于跳过
-
-
-	
-	
+	db.stus.find({name:"新垣结衣"}).pretty() #结构化显示
+	db.stus.find({name:{$type:2}})  #查看name字段的属性为string的文档
+	Double	1	 
+	String	2	 
+	Object	3
+	Date	9
+	Null	10
 	
  -修改文档
 	db.<collection>.update(查询条件，新对象)；#默认改一个,添加multi:True修改多个
@@ -96,13 +104,17 @@ show collecttioan #显示数据库中所有集合
 	  -e.g:db.stus.replaceOne({username:"季志鹏"},{username:"孙子婷"});
 	 
 	 -e.g:db.stus.update({name:"季志鹏"},{age:25}); #只剩下age
-	 -e.g:db.stus.update({name:"季志鹏"},{$set:{age:25}})
+	 -e.g:db.stus.update({name:"季志鹏"},{$set:{age:25}}) #将age修改为25
 	 -e.g:db.stus.updateMany({name:"季志鹏"},{$unset:{age:25}}); #删除age的属性
-	
+	 -e.g:db.stus.update({'title':'MongoDB 教程'},{$set:{'title':'MongoDB'}},{multi:true}) #修改多条文件
 	db.<collection>.update({},{$push{}}); #向数组中添加新元素
 	db.<collection>.update({},{$addToSet{}}); #向数组中添加新元素,已经有了不会再添加
 	db.<collection>.update({sal:{$lte:2000}},{$inc:{sal:400}}); #sal低于2000的自增400
-	
+	db.stus.save({
+	_id:ObjectId("5b51572cc6e14f5522c9b369"),
+	name:"jizhipeng",
+	age:18,
+	gender:"男"}) #将_id:5b51572cc6e14f5522c9b369的文档变为name age gender的文档
  -删除文档，一般数据库中的数据不会删除，删除找不回，一般不会真正不会删除，一般会在数据中添加字段表示数据是否会删除
 	db.<collection>.remove();
 	db.<collection>.remove({}); #全部删除，清空集合，性能略差
@@ -115,7 +127,7 @@ show collecttioan #显示数据库中所有集合
 	db.<collection>.deleteMany()
 	db.<collection>.drop(); #删除集合
 	db.dropDatabase(); #删除数据库【注意】
-	
+	 -e.g:db.stus.deleteOne({name:'jizhipeng'})
 -文档之间的关系
  -1:1
   -夫妻
@@ -162,12 +174,14 @@ show collecttioan #显示数据库中所有集合
 ])
 
 	db.<collection>.find({}).sort({col:1}); #按照col字段去排序 1为升序 -1为降序
+	 -db.stus.find().sort({age:1})
 	db.<collection>.find({}).sort({col1:1,col2:-1}); #先col1升序 当col1相同时再col2降序
 	limit\skip\sort()可以以任意顺序进行调用
 	db.<collection>.find({},{col:1,col2:0}); #只显示col 想显示谁设置1，_id默认都显示
 	
-	
-	
+ -索引：索引存储在一个易于遍历读取的数据集合中，索引是对数据库表中一列或多列的值进行排序的一种结构
+ -聚合：主要用于处理数据(诸如统计平均值,求和等)，并返回计算后的数据结果
+ 
 	
 	
 	

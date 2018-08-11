@@ -17,7 +17,7 @@ crud:数据的增加、修改、查询、删除
 【约束】
 主键 primary key 物理上存储的顺序时按照主键来维护的
 非空 not null
-唯一 unique
+唯一 UNIQUE
 默认 default 
 外键 foreign key
 【逻辑删除】创建一个列 布尔值 1为删除 逻辑删除 isDelete
@@ -40,307 +40,343 @@ crud:数据的增加、修改、查询、删除
 
 
 
-mysqld --initialize-insecure --user=mysql #在E:\mysql-5.7.20-winx64目录下生成data目录
-net start mysql  #启动mysql服务
+mysqld --initialize-insecure --user=mysql --在E:\mysql-5.7.20-winx64目录下生成data目录
+net start mysql  --启动mysql服务
 在cmd中，输入sc delete mysql，删除服务
-mysql -u root -p #登陆mysql
-quit #退出mysql
-update mysql.user set authentication_string=password("jzp") where user="root"; #更新密码
-flush privileges; #刷新权限表
+mysql -u root -p --登陆mysql
+quit --退出mysql
+update mysql.user set authentication_string=password("jzp") where user="root"; --更新密码
+flush privileges; --刷新权限表
 SELECT NOW(); 当前日期和时间
 SHOW CHARACTER SET; 查看服务器所支持的字符串
 
 
-#创建数据库 
-create database databasename;
-create database if not exists databasename;
-#显示warning
-show warnings;
-#显示数据库
-show databases;
-#选择数据库
+--创建数据库 
+CREATE database databasename;
+CREATE database if not exists databasename;
+--显示warning
+SHOW warnings;
+--显示数据库
+SHOW databases;
+--选择数据库
 use databasename;
-#删除数据库
-drop databases if exists databasesname;
+--删除数据库
+DROP databases if exists databasesname;
 
 
-#查看数据库支持储存引擎
-show engines;
-show engines\G 
-#查看默认储存引擎
-show variables like '%stor%';
-#修改默认储存引擎 先停止服务器，然后修改默认文件
-#表的创建
-create table tablename;
-create table if not exists tablename;
-#表的查看
-show create table tablename;
+--查看数据库支持储存引擎
+SHOW engines;
+SHOW engines\G 
+--查看默认储存引擎
+SHOW variables LIKE '%stor%';
+--修改默认储存引擎 先停止服务器，然后修改默认文件
+--表的创建
+CREATE TABLE tablename;
+CREATE TABLE if not exists tablename;
+--表的查看
+SHOW CREATE TABLE tablename;
 desc tablename
-#在表中插入列
-create table tablename(var1 int,var2 int);
-alter table tablename add column colname int;
-#将列修改为自增主键
-alter table tablename MODIFY col SMALLINT UNSIGNED AUTO_INCREMENT;
+--在表中插入列
+CREATE TABLE tablename(var1 int,var2 int);
+ALTER TABLE tablename ADD column colname int;
+--将列修改为自增主键
+ALTER TABLE tablename MODIFY col SMALLINT UNSIGNED AUTO_INCREMENT;
 
 
-#插入对象
-insert into tablename values(1,2)
-insert into tablename (col1,col2) values("jizhiopeng",18)
-#查看
-select * from tablename
-#表定义的更新
-alter table oldname rename to newname;
-rename table oldname to newname;
-#在表内增加列名
-alter table tablename add column varname int ;
-alter table tablename add column varname int after var1;#在var1后增加
-#删除列名
-alter table tablename drop column varname;
-#修改列的属性
-alter table tablename  change column varname varname(可以加新的名字) varchar();
-alter table tablename  modify column varname varchar(); #modify只能给修改列定义
-#表的删除 不能恢复 谨慎使用
-drop table tablename 
-#复制表
-create table newtable like oldtable;
+--插入对象
+INSERT into tablename values(1,2)
+INSERT into tablename (col1,col2) values("jizhiopeng",18)
+--查看
+SELECT * FROM tablename
+--表定义的更新
+ALTER TABLE oldname rename to newname;
+rename TABLE oldname to newname;
+--在表内增加列名
+ALTER TABLE tablename ADD column varname int ;
+ALTER TABLE tablename ADD column varname int after var1;--在var1后增加
+--删除列名
+ALTER TABLE tablename DROP column varname;
+--修改列的属性
+ALTER TABLE tablename  change column varname varname(可以加新的名字) varchar();
+ALTER TABLE tablename  modify column varname varchar(); --modify只能给修改列定义
+--表的删除 不能恢复 谨慎使用
+DROP TABLE tablename 
+--插入列名并设默认值
+ALTER TABLE tablename ADD column varname int default 200;
+--删除字段的默认值
+ALTER TABLE testALTER_tbl ALTER i DROP DEFAULT;
+--复制表
+CREATE TABLE newtable LIKE oldtable; --复制表的结构
+INSERT INTO targetTable SELECT * FROM sourceTable; --插入表的数据
 
-#索引的操作 在查找定位时可以快速的查找到
-create index indexname on tablename(varname); 普通索引
-create  unique index index_unique_name on tablename(varname); 唯一索引索引
-alter table tablename add primary key (colname); #定义主键索引 主键是唯一索引
-alter table tablename drop index indexname; #删除索引
-alter table tablename add index indexname(colname1,colname2); #添加复合索引
+--索引的操作 在查找定位时可以快速的查找到
+CREATE INDEX INDEXname on tablename(varname); 普通索引
+CREATE  UNIQUE INDEX INDEX_unique_name on tablename(varname); --唯一索引索引
+ALTER TABLE tablename ADD primary key (colname); --定义主键索引 主键是唯一索引
+ALTER TABLE tablename DROP INDEX INDEXname; --删除索引
+ALTER TABLE tablename ADD INDEX INDEXname(colname1,colname2); --添加复合索引
 where colname1 = 'a' and colname2 = 'b' 
-create fulltext index indexname on tablename(colname); #全文索引 innodb创建不了全问索引
-show index from tablename #展示索引
-drop index indexname on tablename; 删除索引
-alter table tablename drop index on colname;删除索引
+CREATE fulltext INDEX INDEXname on tablename(colname); --全文索引 innodb创建不了全问索引
+SHOW INDEX FROM tablename --展示索引
+DROP INDEX INDEXname on tablename; 删除索引
+ALTER TABLE tablename DROP INDEX on colname;删除索引
 
-#视图的操作 视图为有固定结果的SQL语句,视图的行为表现的像一个表，但实际上并不拥有任何数据（虚拟表）
-create view viewname as select col1,col2 from tablename; #视图的创建
-show create view viewname\G #查看视图
+--视图的操作 视图为有固定结果的SQL语句,视图的行为表现的像一个表，但实际上并不拥有任何数据（虚拟表）
+CREATE view viewname as SELECT col1,col2 FROM tablename; --视图的创建
+SHOW CREATE view viewname\G --查看视图
 
-select * from user_view; #只能查看规定的列名
+SELECT * FROM user_view; --只能查看规定的列名
 desc viewname;
-alter view viewname as select col1,col2,col3 from tablename;#视图的修改
-drop view viewname #删除视图
+ALTER view viewname as SELECT col1,col2,col3 FROM tablename;--视图的修改
+DROP view viewname --删除视图
 在视图中修改是直接修改表中的数据，视图本身不存储数据
 
-#触发器的操作
-create trigger trigger_name  #一个触发器
- before|after trigger_event(INSERT) #假设插入tablename中对象就在t2中插入。。
+--触发器的操作
+CREATE trigger trigger_name  --一个触发器
+ before|after trigger_event(INSERT) --假设插入tablename中对象就在t2中插入。。
  on tablename for each row
  trigger_stmt(INSERT into t2 values(USER()))；
 
-delimiter $$ #多个触发器 设置分隔符为$$
-create trigger trigger_name
+delimiter $$ --多个触发器 设置分隔符为$$
+CREATE trigger trigger_name
  AFTER trigger_event(INSERT) on t1 for each row
  BEGIN
- insert into t2 values()； #用;做分隔服 以免混淆$$
- insert into t3 values()；
+ INSERT into t2 values()； --用;做分隔服 以免混淆$$
+ INSERT into t3 values()；
  END
- $$ #执行
-delimiter ; #设置分隔符为;
-show trigger\G #查看触发器
-select * from triggers where trigger_name = 'triggername' #查看触发器
-drop trigger triggername #删除触发器 触发器不能修改 只能将原先的触发器删除再添加新的触发器
+ $$ --执行
+delimiter ; --设置分隔符为;
+SHOW trigger\G --查看触发器
+SELECT * FROM triggers where trigger_name = 'triggername' --查看触发器
+DROP trigger triggername --删除触发器 触发器不能修改 只能将原先的触发器删除再添加新的触发器
 
-#记录的操作
-select * from table limit 1; #只显示第一行
-select * from table limit 1,2; #第一行开始的两行
-select colname from table;
-select col1 from table f where col2=1 and col2 = 'xxx';
-select col1,count(col1) from tablename group by col;#对table中的col进行计数，并按照col进行排列 
-select col1,count(col1) as c from tablename group by col;#将计数列名改名为c
-select col1,count(col1) as c from tablename group by col having c>1; #将<1的记录过滤掉
-select * from tablename order by col1 asc#按照col1进行升序排序
-select * from tablename order by col1 dasc#按照col1进行降序排序
-order by right(col,3); #根据最后三位数字进行排序
-order by 2,5; #根据第二和第五列排序
-insert into tablename values(1,'beijing'),(2,'Weifang'); #添加数据
-insert into newtable select * from oldtable;#将oldtable的记录插入到newtable中
-update tablename set col = 28 where col2 = 6; #更改记录  一定要添加where语句！！
-update tablename set col = 28,col3 = 24 where col2 = 6; #更新多个记录
-delete from tablename where id = 6; #删除记录
-create table tablename1 select * from tablename2;#选择tablename2的所有列创造tablenam1
+--记录的操作
+SELECT * FROM TABLE limit 1; --只显示第一行
+SELECT * FROM TABLE limit 1,2; --第一行开始的两行
+SELECT colname FROM TABLE;
+ SELECT col1,count(col1) FROM tablename group by col;--对table中的col进行计数，并按照col进行排列 
+SELECT col1,count(col1) as c FROM tablename group by col;--将计数列名改名为c
+SELECT col1,count(col1) as c FROM tablename group by col having c>1; --将<1的记录过滤掉
+SELECT * FROM tablename order by col1 asc--按照col1进行升序排序
+SELECT * FROM tablename order by col1 dasc--按照col1进行降序排序
+order by right(col,3); --根据最后三位数字进行排序
+order by 2,5; --根据第二和第五列排序
+INSERT into tablename values(1,'beijing'),(2,'Weifang'); --添加数据
+INSERT into newtable SELECT * FROM oldtable;--将oldtable的记录插入到newtable中
+update tablename set col = 28 where col2 = 6; --更改记录  一定要添加where语句！！
+update tablename set col = 28,col3 = 24 where col2 = 6; --更新多个记录
+delete FROM tablename where id = 6; --删除记录
+CREATE TABLE tablename1 SELECT * FROM tablename2;--选择tablename2的所有列创造tablenam1
 
-#数据记录查询
-select * from tablename limit 10; #查询10条改表的记录、
-select * from tablename limit M,N; #M行之后的N行
-select col1,col2 from tablename #只显示col1 col2的记录 可以指定顺序
-selet distinct(col1) from tablename; #查询col1不重复的记录,去重
-select 1+1; #1 + 1 四则运算
-select col2*2 from tablename ;#col2*2
-select CONCAT('hello','world'); helloworld
-select CONCAT(CONCAT(col,'num is '),col2) from tablename #col num is col2
-select * from tablename where (vol1>100 and vol2>200) or vol3 > 200;#带条件的编号
-select * from tablename where vol between 100 and 200;between带有=
-select * from tablename where col is NULL; #空不能等于NULL
-selecr * from tablename where col1 in (10,20,30) #将col等于10 20 30的col1显示出来
+--数据记录查询
+SELECT * FROM tablename limit 10; --查询10条改表的记录、
+SELECT * FROM tablename limit M,N; --M行之后的N行
+SELECT col1,col2 FROM tablename --只显示col1 col2的记录 可以指定顺序
+selet distinct(col1) FROM tablename; --查询col1不重复的记录,去重
+SELECT 1+1; --1 + 1 四则运算
+SELECT col2*2 FROM tablename ;--col2*2
+SELECT CONCAT('hello','world'); helloworld
+SELECT CONCAT(CONCAT(col,'num is '),col2) FROM tablename --col num is col2
+SELECT * FROM tablename where (vol1>100 and vol2>200) or vol3 > 200;--带条件的编号
+SELECT * FROM tablename where vol between 100 and 200;between带有=
+SELECT * FROM tablename where col is NULL; --空不能等于NULL
+selecr * FROM tablename where col1 in (10,20,30) --将col等于10 20 30的col1显示出来
 “_”该通配符能匹配单个字符
 “%”改通配符值可以匹配任意长度的字符串，可以是0个
-show variables like "%max"; #显示以max结尾的变量 %max%中间
-select * from tablename where name like 'a%';#显示col1以a开头的数据 不区分大小写 \可以转义%
-select * from tablename where col REGEXP '^[FG]'; #正则表达式
-select * from tablename by col desc;降序排列 默认为升序 col1,col2 desc  col1以升序排列 ，col2以降序
+SHOW variables LIKE "%max"; --显示以max结尾的变量 %max%中间
+SELECT * FROM tablename where name LIKE 'a%';--显示col1以a开头的数据 不区分大小写 \可以转义%
+SELECT * FROM tablename where col REGEXP '^[FG]'; --正则表达式
+SELECT * FROM tablename by col desc;降序排列 默认为升序 col1,col2 desc  col1以升序排列 ，col2以降序
 COUNT()
 AVG()
 SUM()
 MAX()
 MIN()
-select count(col1) from tablename; #NULL记录并不包含 空记录包含
-select count(*) from tablename; #查看有多少条记录
-select sum(col1)/count(col1) from tablename;
-select min(col1),max(col2) from tablename;
-select col1,count(1) from tablename groupby col1; #按照col1分组计算分组数量 
-select col1,count(1) from tablename groupby col1,col2 #按照col1 col2分组数量
-select col1,group_concat(distinct(col2)) from tablename group by col1;#根据col1分组查看每个组col2包含的内容,
-select col1,col3,group_concat(distinct(col2)) from tablename group by col1,col3; #根据col1 col3分组查看col2里包含的内容 实现多个分组查询
-select col1,col3,group_concat(distinct(col2)),fun() from tablename group by col1,col3; #后面可以加函数
-select col1,col3,group_concat(distinct(col2)) as A,fun() as B from tablename group by col1,col3 having A>10;#主要用于group by的结果集上进行过滤 分别重命名AB
+SELECT count(col1) FROM tablename; --NULL记录并不包含 空记录包含
+SELECT count(*) FROM tablename; --查看有多少条记录
+SELECT sum(col1)/count(col1) FROM tablename;
+SELECT min(col1),max(col2) FROM tablename;
+SELECT col1,count(1) FROM tablename groupby col1; --按照col1分组计算分组数量 
+SELECT col1,count(1) FROM tablename groupby col1,col2 --按照col1 col2分组数量
+SELECT col1,group_concat(distinct(col2)) FROM tablename group by col1;--根据col1分组查看每个组col2包含的内容,
+SELECT col1,col3,group_concat(distinct(col2)) FROM tablename group by col1,col3; --根据col1 col3分组查看col2里包含的内容 实现多个分组查询
+SELECT col1,col3,group_concat(distinct(col2)),fun() FROM tablename group by col1,col3; --后面可以加函数
+SELECT col1,col3,group_concat(distinct(col2)) as A,fun() as B FROM tablename group by col1,col3 having A>10;--主要用于group by的结果集上进行过滤 分别重命名AB
 
-#字符串操作，字符串的第一个字符为1
-select quote(col1) from tablename; #将col1的内容变为字符串
-select length(col1) from tablename; #将col1的内容变为字符串
-select position('a' in col1) from tablename; #返回a在col1中的位置
-select locate('a' ,col1,5) from tablename; #在col1第5个字符后查找a在col1中的位置
-select strcmp('abc','def') abc_def; #-1第一个字符串的排序在前，0两个字符串排序，1第二个字符串在前。
-select insert('goodbye world',9,0,'dangerous'); #原始字符串、开始位置、替换的字符数、替换的字符串
+--字符串操作，字符串的第一个字符为1
+SELECT quote(col1) FROM tablename; --将col1的内容变为字符串
+SELECT length(col1) FROM tablename; --将col1的内容变为字符串
+SELECT position('a' in col1) FROM tablename; --返回a在col1中的位置
+SELECT locate('a' ,col1,5) FROM tablename; --在col1第5个字符后查找a在col1中的位置
+SELECT strcmp('abc','def') abc_def; ---1第一个字符串的排序在前，0两个字符串排序，1第二个字符串在前。
+SELECT INSERT('goodbye world',9,0,'dangerous'); --原始字符串、开始位置、替换的字符数、替换的字符串
 
-#多表数据查询
-select a.vol1 from tablename a;#将tablename别名为a 查看a的vol1
-select a.col1 b.col2 from table1 a,table2,b where a.col3=b.col4 #用a的col3和b的col4作为连接键，连接a的col1和b的col2
-select * from tablename1
-select a.col1,a.col2,b.col1,b.col2 from a INNER JOIN b ON a.col1 = b.col3 #表连接
-select a.col1,a.col2,b.col1,b.col2 from a INNER JOIN b USING (id) #表连接 两个表的列名相同时
+--多表数据查询
+SELECT a.vol1 FROM tablename a;--将tablename别名为a 查看a的vol1
+SELECT a.col1 b.col2 FROM table1 a,table2,b where a.col3=b.col4 --用a的col3和b的col4作为连接键，连接a的col1和b的col2
+SELECT * FROM tablename1
+SELECT a.col1,a.col2,b.col1,b.col2 FROM a INNER JOIN b ON a.col1 = b.col3 --表连接
+SELECT a.col1,a.col2,b.col1,b.col2 FROM a INNER JOIN b USING (id) --表连接 两个表的列名相同时
  UNION
- select * from tablename2; #合并查询 
-select * from table1 #单行单列子查询
- where col1>(select col1 from table2 where col2='A'); #选择col1大于当col2等于A值col1的数据
-select * from tablename1 #带有关键字IN
- where col1 in (select col1 from tablename2 where col1 in (a,b,c)); #可以变为not in 
-=ANY #功能与IN一样
->ANY #最小值还要大于
-<ANY #最大值还要小于
-select * from table2 #ANY
- where col1 ANY>(select col1 from table1 where col2 = 'A');table2中的col1比table1中的col1最小的还要大
->ALL #比子查询中返回数据记录中最大的还要大于的数据记录
-<ALL #比子查询中返回数据记录中最小的还要小于的数据记录
-select * from table2 #ANY
- where col1 ALL>(select col1 from table1 where col2 = 'A');table2中的col1比table1中的col1最大的还要大
-EXISTS关键字 #当返回结果集时为TRUE 不能返回结果集时为FALSE
-select * from table1 A 
- where EXISTS(select * from table2 where col1 = A.col1) #将A.col1带入table2中的col1，若存在col1则返回table1中的数据集
+ SELECT * FROM tablename2; --合并查询 
+SELECT * FROM table1 --单行单列子查询
+ where col1>(SELECT col1 FROM table2 where col2='A'); --选择col1大于当col2等于A值col1的数据
+SELECT * FROM tablename1 --带有关键字IN
+ where col1 in (SELECT col1 FROM tablename2 where col1 in (a,b,c)); --可以变为not in 
+=ANY --功能与IN一样
+>ANY --最小值还要大于
+<ANY --最大值还要小于
+SELECT * FROM table2 --ANY
+ where col1 ANY>(SELECT col1 FROM table1 where col2 = 'A');table2中的col1比table1中的col1最小的还要大
+>ALL --比子查询中返回数据记录中最大的还要大于的数据记录
+<ALL --比子查询中返回数据记录中最小的还要小于的数据记录
+SELECT * FROM table2 --ANY
+ where col1 ALL>(SELECT col1 FROM table1 where col2 = 'A');table2中的col1比table1中的col1最大的还要大
+EXISTS关键字 --当返回结果集时为TRUE 不能返回结果集时为FALSE
+SELECT * FROM table1 A 
+ where EXISTS(SELECT * FROM table2 where col1 = A.col1) --将A.col1带入table2中的col1，若存在col1则返回table1中的数据集
 
-#MYSQL运算符
-select A*B A/B A*B A-B num; #建立别名进行计算
-select 11>2;#返回布尔值 0为FALSE 1为TRUE
-select * from table1 where col1 > 2;
-select 1<>2; #1不等于2
+--MYSQL运算符
+SELECT A*B A/B A*B A-B num; --建立别名进行计算
+SELECT 11>2;--返回布尔值 0为FALSE 1为TRUE
+SELECT * FROM table1 where col1 > 2;
+SELECT 1<>2; --1不等于2
 and && 和
 or 
-select BIN(6); #查看二进制
+SELECT BIN(6); --查看二进制
 
-#MYSQL的常用函数 不区分大小写和单双引号
-select concat('a','b'); #ab
-select concat(1,2); #12
-select concat_ws(":","2012","09"); #2012-09 传入NULL时返回NULL
-select strcmp('a','b');#比较字符串大小 大于1 小于-1 等于0 a<b 越往后越大
-select length(str);#返回字符串长度 计算空格
-select char_length(str);#返回字符长度
-select upper(); #大写
-select lower(); #小写
-select find_in_set('asd','a,as,asd'); #返回字符串位置 3
-select field('a','a','b'); #返回字符串匹配的位置 1
-select LEFT('asd',1); #左边截取字符串 a
-select RIGHT('asd',1) #右边截取字符串 d
-select substring('asdd',m,n); #从m截取n个字符串 若n过大 则返回剩余所有
-select mid('asdd',m,n);
-select sign(1); #正数返回1，负数返回0
-select ltrim('  a'); #去除左边空格
-select rtrim('  a'); #去除右边空格
-select trim('  a b   '); #去除所有，不去中间
-select replace('abc','a','b'); #bbc
-select rand(); #获取随机函数
-select ceil(); #向上取整
-select floor(); #向下取整
-select truncate(903.223,2); #保留2个小数，不四舍五入，跟负数时改为小数点左边
-select round(2.56,2); #四舍五入
-select now(); #获取当前时间
-select curdate(); #获取当前日期 
-select from_unixtime('123'); #从整型转换为日期
-select unix_timestamp(now()); 
-select sysdate(); #系统时间
-select year();quarter();month();week();dayofmonth();hour();minute();second(); #获取年、季度、星期、、、、
-select to_days(now()); #相隔天数
-select datediff(now(),'2018-06-12'); #6 06都可以
-select 
-\h #sql的帮助
-\s #sql的信息
-select version();
-select databse();
-select user();
-create table tablename(id int auto_increment primary ket); #创建自增长函数
+--MYSQL的常用函数 不区分大小写和单双引号
+SELECT concat('a','b'); --ab
+SELECT concat(1,2); --12
+SELECT concat_ws(":","2012","09"); --2012-09 传入NULL时返回NULL
+SELECT strcmp('a','b');--比较字符串大小 大于1 小于-1 等于0 a<b 越往后越大
+SELECT length(str);--返回字符串长度 计算空格
+SELECT char_length(str);--返回字符长度
+SELECT upper(); --大写
+SELECT lower(); --小写
+SELECT find_in_set('asd','a,as,asd'); --返回字符串位置 3
+SELECT field('a','a','b'); --返回字符串匹配的位置 1
+SELECT LEFT('asd',1); --左边截取字符串 a
+SELECT RIGHT('asd',1) --右边截取字符串 d
+SELECT substring('asdd',m,n); --从m截取n个字符串 若n过大 则返回剩余所有
+SELECT mid('asdd',m,n);
+SELECT sign(1); --正数返回1，负数返回0
+SELECT ltrim('  a'); --去除左边空格
+SELECT rtrim('  a'); --去除右边空格
+SELECT trim('  a b   '); --去除所有，不去中间
+SELECT replace('abc','a','b'); --bbc
+SELECT rand(); --获取随机函数
+SELECT ceil(); --向上取整
+SELECT floor(); --向下取整
+SELECT truncate(903.223,2); --保留2个小数，不四舍五入，跟负数时改为小数点左边
+SELECT round(2.56,2); --四舍五入
+SELECT now(); --获取当前时间
+SELECT curdate(); --获取当前日期 
+SELECT from_unixtime('123'); --从整型转换为日期
+SELECT unix_timestamp(now()); 
+SELECT sysdate(); --系统时间
+SELECT year();quarter();month();week();dayofmonth();hour();minute();second(); --获取年、季度、星期、、、、
+SELECT to_days(now()); --相隔天数
+SELECT datediff(now(),'2018-06-12'); --6 06都可以
+SELECT 
+\h --sql的帮助
+\s --sql的信息
+SELECT version();
+SELECT databse();
+SELECT user();
+CREATE TABLE tablename(id int auto_increment primary ket); --创建自增长函数
 
-#存储过程和函数的操作
-delimiter $$ #设置分隔符 ，创建存储过程
-create procedure procedure_name()
+--存储过程和函数的操作
+delimiter $$ --设置分隔符 ，创建存储过程
+CREATE procedure procedure_name()
  BEGIN
- select col1 from tablename;
+ SELECT col1 FROM tablename;
  END
  $$
-delimiter ; #恢复分隔符
-call procedure_name; #调用存储过程
-delimiter $$ #设置分隔符 ，创建函数
-create function function_name(col INT(11)) #传入参数col
- returns double(10,2) #返回数据形式
+delimiter ; --恢复分隔符
+call procedure_name; --调用存储过程
+delimiter $$ --设置分隔符 ，创建函数
+CREATE function function_name(col INT(11)) --传入参数col
+ returns double(10,2) --返回数据形式
  BEGIN
- return(select col2 from tablename where tablename.col1 = col); 
+ return(SELECT col2 FROM tablename where tablename.col1 = col); 
  END
  $$
 delimiter ; 
-select function_name(23); #查询tablename.col1=23的数据，并返回col2
-declare col INTETER;#声明变量
-declare var;# 创建游标
-open var;#打开游标
-FETCH var into col;#遍历
-show procedurename; #查看存储过程
-show create functionname; #查看方程
-set var = 0; #对变量进行赋值
+SELECT function_name(23); --查询tablename.col1=23的数据，并返回col2
+declare col INTETER;--声明变量
+declare var;-- 创建游标
+open var;--打开游标
+FETCH var into col;--遍历
+SHOW procedurename; --查看存储过程
+SHOW CREATE functionname; --查看方程
+set var = 0; --对变量进行赋值
 
-#MYSQL事务
-begin; #在表内开启一个事务
-commit; #提交修改，保存到磁盘里
-rollback; #提交前可撤销
-set autocommit=0; #关闭自动提交，1为打开自动提交
+--MYSQL事务
+MYSQL 事务处理主要有两种方法：
+--1、用 BEGIN, ROLLBACK, COMMIT来实现
+--BEGIN 开始一个事务
+ROLLBACK 事务回滚
+COMMIT 事务确认
+2、直接用 SET 来改变 MySQL 的自动提交模式:
+SET AUTOCOMMIT=0 禁止自动提交
+SET AUTOCOMMIT=1 开启自动提交
+在 MySQL 中只有使用了 Innodb 数据库引擎的数据库或表才支持事务。
+--begin; --在表内开启一个事务
+commit; --提交修改，保存到磁盘里
+rollback; --提交前可撤销
+set autocommit=0; --关闭自动提交，1为打开自动提交
 更改了默认级别以后需要重新登录
 读取未提交：所有事务都可以看到其他未提交事务的执行结果，读取未提交的数据成为脏读。其他用户未提交就可以看到更改
 set golbal transcation isolation level read uncommitted;
 读取提交内容：事务只能看见已经提交事务所做的改变，同一查询可能返回不同结果，此级别导致的不可重复读问题，提交之后不同的操作用户才能看见更改
 set golbal transcation isolation level read committed;
 可重读：能确保同一事务的多个实例在并发读取数据时，会看到同样的数据行,虽然A事务进行了更改并提交，但B事务查看的结果是一致的。
-set golbal transcation isolation level read repeatable;#MYSQL的默认隔离级别
+set golbal transcation isolation level read repeatable;--MYSQL的默认隔离级别
 隐式提交
 innodb锁机制 没有索引时更改会被锁住，A事务操作时，如果B事务也操作，需要A释放锁，B才能操作。
 
-#MYSQL安全性机制
+--MYSQL安全性机制
 use mysql;
-select * from user\G #查看用户信息及各个信息
+SELECT * FROM user\G --查看用户信息及各个信息
 desc mysql.db;
 desc mysql.host;
 mysql - h 127.0.0.1(主机) -u root*(用户名) -p company(密码) -e "code";
-show grants; #查看当前用户的权限
-grant usage on *.*(数据库名字或者表 ) to test(用户名)@1993.09.02（主机的名字）indentified by '123'; # 创建新用户 
+SHOW grants; --查看当前用户的权限
+grant usage on *.*(数据库名字或者表 ) to test(用户名)@1993.09.02（主机的名字）indentified by '123'; -- 创建新用户 
 flush privileges;
-drop user test@"%"; #删除用户
+DROP user test@"%"; --删除用户
 
-#MYSQL日志管理
-
-
-
-
-
-
+--MYSQL日志管理 
+--临时表 临时表只在当前连接可见，当关闭连接时，Mysql会自动删除表并释放所有空间。
+CREATE TEMPORARY TABLE SalesSummary (var int)
+SELECT * FROM SalesSummary; --删除临时表
+--重复数据
+-如果想通过2个字段防止重复 设置双主键
+CREATE TABLE person_tbl
+(
+   first_name CHAR(20) NOT NULL,
+   last_name CHAR(20) NOT NULL,
+   sex CHAR(10),
+   PRIMARY KEY (last_name, first_name)
+);
+INSERT IGNORE INTO当插入数据时，在设置了记录的唯一性后，如果插入重复数据，将不返回错误，只以警告形式返回。 而REPLACE INTO into如果存在primary 或 unique相同的记录，则先删除掉。再插入新记录。
+--统计重复数据
+SELECT COUNT(*) as repetitions, last_name, first_name
+FROM person_tbl
+GROUP BY last_name, first_name
+HAVING repetitions > 1;
+--过滤重复数据
+SELECT DISTINCT last_name, first_name FROM person_tbl;
+or
+SELECT last_name, first_name FROM person_tbl GROUP BY (last_name, first_name);
+--删除重复数据
+CREATE TABLE tmp SELECT last_name, first_name, sex FROM person_tbl  GROUP BY (last_name, first_name, sex);
+DROP TABLE person_tbl;
+ALTER TABLE tmp RENAME TO person_tbl;
+or  --在数据表中添加 INDEX（索引） 和 PRIMAY KEY（主键）这种简单的方法来删除表中的重复记录。方法如下：
+ALTER IGNORE TABLE tablename
+ADD PRIMARY KEY (var1, var2);
 
 
 
