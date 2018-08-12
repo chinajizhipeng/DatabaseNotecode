@@ -371,12 +371,51 @@ SELECT DISTINCT last_name, first_name FROM person_tbl;
 or
 SELECT last_name, first_name FROM person_tbl GROUP BY (last_name, first_name);
 --删除重复数据
-CREATE TABLE tmp SELECT last_name, first_name, sex FROM person_tbl  GROUP BY (last_name, first_name, sex);
+CREATE TABLE tmp SELECT last_name, first_name, sex FROM person_tbl  GROUP BY last_name, first_name, sex;
 DROP TABLE person_tbl;
 ALTER TABLE tmp RENAME TO person_tbl;
 or  --在数据表中添加 INDEX（索引） 和 PRIMAY KEY（主键）这种简单的方法来删除表中的重复记录。方法如下：
 ALTER IGNORE TABLE tablename
 ADD PRIMARY KEY (var1, var2);
+--MySQL导入导出数据
+--导入出文件
+SELECT * FROM tablename INTO OUTFILE '/tmp/runoob.txt'; --一定是能导出的文件
+--CSV 
+SELECT * FROM passwd INTO OUTFILE '/tmp/runoob.txt'
+FIELDS TERMINATED BY ',' ENCLOSED BY '"'
+LINES TERMINATED BY '\r\n';
+--逗号隔开
+SELECT a,b,a+b INTO OUTFILE '/tmp/result.text'
+FIELDS TERMINATED BY ',' --字段间隔符为,
+OPTIONALLY ENCLOSED BY '' --每个字段的包裹 ‘sss’,'sss'
+LINES TERMINATED BY '\n'  --每一行的换行符
+FROM test_table;
+--导出整个数据库
+ mysqldump -u root -p --all-databases > database_dump.txt
+--导入文件
+mysql -u用户名 -p密码  <  要导入的数据库数据(runoob.sql)
+--source命令导入
+create database abc;
+use abc;
+set names utf8;
+source /home/abc/abc.sql
+--使用 LOAD DATA 导入数据
+ LOAD DATA LOCAL INFILE 'dump.txt' INTO TABLE mytbl;
+--使用 mysqlimport 导入数据
+mysqlimport -u root -p --local database_name dump.txt
+--导入csv
+load data infile '/tmp/result.text' into table tablename 
+FIELDS TERMINATED BY ',' --字段间隔符为,
+OPTIONALLY ENCLOSED BY '' --每个字段的包裹 ‘sss’,'sss'
+LINES TERMINATED BY '\n'  --每一行的换行符
+
+
+
+
+
+
+
+
 
 
 

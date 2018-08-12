@@ -181,10 +181,28 @@ db.createCollection("mycoll", {capped:true, size:100000}) #创建指定大小的集合 大
 	
  -索引：索引存储在一个易于遍历读取的数据集合中，索引是对数据库表中一列或多列的值进行排序的一种结构
  -聚合：主要用于处理数据(诸如统计平均值,求和等)，并返回计算后的数据结果
- 
+db.stus.aggregate([{
+$group:{_id:"$name",var1:{$sum:1}} #var1可以命名
+}]) #统计name出现的次数
+
+db.stus.aggregate([{
+$group:{_id:"$name",var1:{$avg:"$age"}}
+}]) #根据name求平均数
+表达式	描述	实例
+$sum	计算总和。							db.mycol.aggregate([{$group : {_id : "$by_user", num_tutorial : {$sum : "$likes"}}}])
+$avg	计算平均值							db.mycol.aggregate([{$group : {_id : "$by_user", num_tutorial : {$avg : "$likes"}}}])
+$min	获取集合中所有文档对应值得最小值。	db.mycol.aggregate([{$group : {_id : "$by_user", num_tutorial : {$min : "$likes"}}}])
+$max	获取集合中所有文档对应值得最大值。	db.mycol.aggregate([{$group : {_id : "$by_user", num_tutorial : {$max : "$likes"}}}])
+$push	在结果文档中插入值到一个数组中。	db.mycol.aggregate([{$group : {_id : "$by_user", url : {$push: "$url"}}}])
+$addToSet	在结果文档中插入值到一个数组中，但不创建副本。	db.mycol.aggregate([{$group : {_id : "$by_user", url : {$addToSet : "$url"}}}])
+$first	根据资源文档的排序获取第一个文档数据。	db.mycol.aggregate([{$group : {_id : "$by_user", first_url : {$first : "$url"}}}])
+$last	根据资源文档的排序获取最后一个文档数据	db.mycol.aggregate([{$group : {_id : "$by_user", last_url : {$last : "$url"}}}])
 	
-	
-	
+#管道 
+	-管道在Unix和Linux中一般用于将当前命令的输出结果作为下一个命令的参数。	
+	-MongoDB的聚合管道将MongoDB文档在一个管道处理完毕后将结果传递给下一个管道处理。管道操作是可以重复的。
+
+
 	
 	
 	
